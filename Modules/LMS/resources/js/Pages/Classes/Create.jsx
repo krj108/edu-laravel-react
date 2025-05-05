@@ -3,6 +3,7 @@ import { Head, useForm } from '@inertiajs/react';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
+import ImagePreviewInput from '@/Components/ImagePreviewInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function Create({ auth }) {
@@ -53,13 +54,12 @@ export default function Create({ auth }) {
 
               <div>
                 <InputLabel htmlFor="image" value="Image" />
-                <input
-                  id="image"
-                  type="file"
-                  onChange={e => setData('image', e.target.files[0])}
-                  className="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400"
+                <ImagePreviewInput
+                  current={null}
+                  value={data.image}
+                  onChange={file => setData('image', file)}
+                  error={errors.image}
                 />
-                <InputError message={errors.image} className="mt-2" />
               </div>
 
               <div className="flex justify-end">

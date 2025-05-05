@@ -1,10 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
+import DataTable from '@/Components/DataTable';
+import SearchAddBar from '@/Components/SearchAddBar';
+import ImagePreviewInput from '@/Components/ImagePreviewInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import DangerButton from '@/Components/DangerButton';
-import { HiSearch, HiPlus, HiPencil, HiTrash } from 'react-icons/hi';
-import Pagination from '@/Components/Pagination'; // assuming you have a shared Pagination component
+import { HiPencil, HiTrash } from 'react-icons/hi';
+import Pagination from '@/Components/Pagination';
 
 export default function Index({ auth, classes, filters }) {
   const [search, setSearch] = useState(filters.search || '');
@@ -30,67 +33,42 @@ export default function Index({ auth, classes, filters }) {
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-            
-            {/* Search + Add */}
-            <div className="flex items-center justify-between mb-4">
-              <form onSubmit={handleSearch} className="flex items-center space-x-2 flex-1 max-w-xl">
-                <div className="relative flex-1">
-                  <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
-                  <input
-                    type="text"
-                    placeholder="Search by class name"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    className="pl-10 pr-4 w-full border-gray-300 dark:bg-gray-900 dark:text-white dark:border-gray-700 rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                </div>
-                <PrimaryButton type="submit" className="hidden sm:inline-flex">
-                  <HiSearch className="h-5 w-5" />
-                </PrimaryButton>
-              </form>
+            <SearchAddBar
+              placeholder="Search by class name"
+              search={search}
+              onSearchChange={setSearch}
+              onSearchSubmit={handleSearch}
+              addLabel="Add New Class"
+              addHref={route('lms.classes.create')}
+            />
 
-              <PrimaryButton as="a" href={route('lms.classes.create')} className="flex items-center gap-2">
-                <HiPlus className="h-5 w-5" />
-                <span className="hidden sm:inline">Add New Class</span>
-              </PrimaryButton>
-            </div>
+            <DataTable
+              columns={[
+                { label: 'Image' },
+                { label: 'Name' },
+                { label: 'Description' },
+                { label: 'Actions', align: 'right' },
+              ]}
+            >
+              {classes.data.map(cls => (
+                <tr key={cls.id}>
+                  <td className="px-6 py-4">
+                    {cls.image ? <img src={`/storage/${cls.image}`} className="h-10 w-10 rounded-md" /> : '—'}
+                  </td>
+                  <td className="px-6 py-4">{cls.name}</td>
+                  <td className="px-6 py-4">{cls.content}</td>
+                  <td className="px-6 py-4 text-right space-x-2">
+                    <PrimaryButton as="a" href={route('lms.classes.edit', cls.id)} className="px-3 py-2 text-sm">
+                      <HiPencil className="h-5 w-5" />
+                    </PrimaryButton>
+                    <DangerButton onClick={() => handleDelete(cls.id)} className="px-3 py-2 text-sm">
+                      <HiTrash className="h-5 w-5" />
+                    </DangerButton>
+                  </td>
+                </tr>
+              ))}
+            </DataTable>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {classes.data.map(cls => (
-                    <tr key={cls.id}>
-                      <td className="px-6 py-4">
-                        {cls.image
-                          ? <img src={`/storage/${cls.image}`} className="h-10 w-10 rounded-md" alt="" />
-                          : '—'}
-                      </td>
-                      <td className="px-6 py-4">{cls.name}</td>
-                      <td className="px-6 py-4">{cls.content}</td>
-                      <td className="px-6 py-4 text-right space-x-2">
-                        <PrimaryButton as="a" href={route('lms.classes.edit', cls.id)} className="px-3 py-2 text-sm" title="Edit">
-                          <HiPencil className="h-5 w-5" />
-                        </PrimaryButton>
-                        <DangerButton onClick={() => handleDelete(cls.id)} className="px-3 py-2 text-sm" title="Delete">
-                          <HiTrash className="h-5 w-5" />
-                        </DangerButton>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
             <Pagination links={classes.links} />
           </div>
         </div>

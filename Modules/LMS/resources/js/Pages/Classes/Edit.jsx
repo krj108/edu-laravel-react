@@ -1,8 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
+import ImagePreviewInput from '@/Components/ImagePreviewInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function Edit({ auth, class: cls }) {
@@ -30,12 +30,11 @@ export default function Edit({ auth, class: cls }) {
             <form onSubmit={submit} encType="multipart/form-data" className="space-y-6">
               <div>
                 <InputLabel htmlFor="name" value="Name" />
-                <TextInput
+                <input
                   id="name"
                   value={data.name}
                   onChange={e => setData('name', e.target.value)}
-                  className="mt-1 block w-full"
-                  isFocused
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
                 <InputError message={errors.name} className="mt-2" />
               </div>
@@ -53,13 +52,12 @@ export default function Edit({ auth, class: cls }) {
 
               <div>
                 <InputLabel htmlFor="image" value="Change Image" />
-                <input
-                  id="image"
-                  type="file"
-                  onChange={e => setData('image', e.target.files[0])}
-                  className="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400"
+                <ImagePreviewInput
+                  current={cls.image}
+                  value={data.image}
+                  onChange={file => setData('image', file)}
+                  error={errors.image}
                 />
-                <InputError message={errors.image} className="mt-2" />
               </div>
 
               <div className="flex justify-end space-x-4">
