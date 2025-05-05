@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import DangerButton from '@/Components/DangerButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { HiSearch, HiPlus, HiEye, HiPencil, HiTrash, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import Pagination from '@/Components/Pagination'; // assuming you have a shared Pagination component
 
 export default function Index({ auth, users, filters }) {
     const [search, setSearch] = useState(filters.search || '');
@@ -31,18 +33,24 @@ export default function Index({ auth, users, filters }) {
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <div className="flex items-center justify-between mb-4">
-                                <form onSubmit={handleSearch} className="flex items-center space-x-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Search by name or email"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        className="border-gray-300 dark:bg-gray-900 dark:text-white dark:border-gray-700 rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    />
-                                    <PrimaryButton type="submit">Search</PrimaryButton>
+                                <form onSubmit={handleSearch} className="flex items-center space-x-2 flex-1 max-w-xl">
+                                    <div className="relative flex-1">
+                                        <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search by name or email"
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
+                                            className="pl-10 pr-4 w-full border-gray-300 dark:bg-gray-900 dark:text-white dark:border-gray-700 rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                        />
+                                    </div>
+                                    <PrimaryButton type="submit" className="hidden sm:inline-flex">
+                                        <HiSearch className="h-5 w-5" />
+                                    </PrimaryButton>
                                 </form>
-                                <PrimaryButton as="a" href={route('users.create')}>
-                                    Add New User
+                                <PrimaryButton as="a" href={route('users.create')} className="flex items-center gap-2">
+                                    <HiPlus className="h-5 w-5" />
+                                    <span className="hidden sm:inline">Add New User</span>
                                 </PrimaryButton>
                             </div>
 
@@ -70,21 +78,24 @@ export default function Index({ auth, users, filters }) {
                                                             as="a"
                                                             href={route('users.show', user.id)}
                                                             className="px-3 py-2 text-sm"
+                                                            title="View"
                                                         >
-                                                            View
+                                                            <HiEye className="h-5 w-5" />
                                                         </SecondaryButton>
                                                         <PrimaryButton
                                                             as="a"
                                                             href={route('users.edit', user.id)}
                                                             className="px-3 py-2 text-sm"
+                                                            title="Edit"
                                                         >
-                                                            Edit
+                                                            <HiPencil className="h-5 w-5" />
                                                         </PrimaryButton>
                                                         <DangerButton
                                                             onClick={() => handleDelete(user.id)}
                                                             className="px-3 py-2 text-sm"
+                                                            title="Delete"
                                                         >
-                                                            Delete
+                                                            <HiTrash className="h-5 w-5" />
                                                         </DangerButton>
                                                     </div>
                                                 </TableCell>
@@ -94,19 +105,8 @@ export default function Index({ auth, users, filters }) {
                                 </table>
                             </div>
 
-                            {/* Pagination */}
-                            <div className="mt-4">
-                                {users.links.map((link, index) => (
-                                    <Link
-                                        key={index}
-                                        href={link.url || ''}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                        className={`px-3 py-1 border rounded ${
-                                            link.active ? 'bg-indigo-600 text-white' : 'text-gray-700 dark:text-gray-300'
-                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    />
-                                ))}
-                            </div>
+                            {/* Pagination Component */}
+                            <Pagination links={users.links} />
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,47 @@ export default function Index({ auth, users, filters }) {
     );
 }
 
-// مكونات مساعدة
+// // Pagination Component
+// const Pagination = ({ links }) => {
+//     return (
+//         <div className="mt-4 flex items-center justify-center gap-1">
+//             {links.map((link, index) => {
+//                 const isPrevious = link.label.includes('Previous');
+//                 const isNext = link.label.includes('Next');
+//                 const isDisabled = !link.url;
+
+//                 return (
+//                     <Link
+//                         key={index}
+//                         href={link.url || ''}
+//                         className={`flex h-10 w-10 items-center justify-center rounded-md border transition-colors ${
+//                             link.active
+//                                 ? 'border-transparent bg-indigo-600 text-white'
+//                                 : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+//                         } ${
+//                             isDisabled
+//                                 ? 'cursor-not-allowed opacity-50 hover:bg-transparent dark:hover:bg-transparent'
+//                                 : ''
+//                         }`}
+//                     >
+//                         {isPrevious ? (
+//                             <HiChevronLeft className="h-5 w-5" />
+//                         ) : isNext ? (
+//                             <HiChevronRight className="h-5 w-5" />
+//                         ) : (
+//                             <span 
+//                                 className="text-sm"
+//                                 dangerouslySetInnerHTML={{ __html: link.label }} 
+//                             />
+//                         )}
+//                     </Link>
+//                 );
+//             })}
+//         </div>
+//     );
+// };
+
+// Helper Components
 const TableHeader = ({ children, align = 'left' }) => (
     <th className={`px-6 py-3 text-${align} text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider`}>
         {children}
