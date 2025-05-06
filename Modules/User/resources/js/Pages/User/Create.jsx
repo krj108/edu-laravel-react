@@ -28,7 +28,7 @@ export default function Create({ auth }) {
       <Head title="Add User" />
 
       <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 space-y-6">
             <form onSubmit={submit} encType="multipart/form-data" className="space-y-6">
               <div>
